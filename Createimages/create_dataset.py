@@ -14,7 +14,7 @@ num_of_img = 30
 name_size = 8
 
 def rand_unit(rr=0.1):
-    # Return -1 to 1 randomly.
+    ## Return int -1 to 1 randomly.
     x = random.random()
     x = 1 if x > (1-rr) else  0 if x > rr else -1
     y = random.random()
@@ -60,18 +60,28 @@ def rand0matrix(w, h, rr=0.5):
         rama[i+1+ry][-2+rx] = 0
     return(rama)
 
-def coloring(zero1_matrix):
-    ##  zero1     =>    rgb
-    ## [[1,1,1],       [[255,255,255],[255,255,255],[255,255,255],
-    ##  [1,0,1],  =>    [255,255,255],[  0,  0,  0],[255,255,255],
-    ##  [1,1,1]]        [255,255,255],[255,255,255],[255,255,255]]
-    rgb_matrix = []  
+# def coloring(binary_matrix):
+#    ##  binary     =>    RGB (BGR)
+#    ## [[1,1,1],       [[255,255,255],[255,255,255],[255,255,255],
+#    ##  [1,0,1],  =>    [255,255,255],[  0,  0,  0],[255,255,255],
+#    ##  [1,1,1]]        [255,255,255],[255,255,255],[255,255,255]]
+#    rgb_matrix = []  
+#    filter = 255
+#    for l in binary_matrix:
+#        l = l * filter # [1,0,1] => [255,  0,255]
+#        l = [list(x) for x in list(zip(*[list(map(int,l)),list(map(int, l)),list(map(int, l))]))] # [255,  0,255] => [[255,255,255], [  0,  0,  0], [255,255,255]]
+#        rgb_matrix.append(l)
+#    return(np.array(rgb_matrix))
+
+def graying(binary_matrix):
+    ##  binary     =>    Grayscale
+    ## [[1,1,1],       [[255,255,255],
+    ##  [1,0,1],  =>    [255,  0,255],
+    ##  [1,1,1]]        [255,255,255]]
     filter = 255
-    for l in zero1_matrix:
-        l = l * filter # [1,0,1] => [255,  0,255]
-        l = [list(x) for x in list(zip(*[list(map(int,l)),list(map(int, l)),list(map(int, l))]))] # [255,  0,255] => [[255,255,255], [  0,  0,  0], [255,255,255]]
-        rgb_matrix.append(l)
-    return(np.array(rgb_matrix))
+    gray_img = binary_matrix * filter
+    return(gray_img)
+
 
 def filename_generate(length, chars=None):
     ## Naming a image randomly.
@@ -84,13 +94,13 @@ def filename_generate(length, chars=None):
 
 
 for i in range(num_of_img):
-    xxx = randXmatrix(width, height, rand_rate) #  Matrix into xxx
-    img = coloring(xxx)                         #  Convert the matirix xxx with image_matrix
+    binary_xxx = randXmatrix(width, height, rand_rate) #  Matrix into xxx
+    img = graying(binary_xxx)                         #  Convert the binary_matirix xxx with grayscaled_matrix for OpenCV2
     file_name = (save_dir[0]+filename_generate(name_size)+".png") # Create the image name and path
     cv2.imwrite(file_name, img)                 #  Write a file
 
-    ooo = rand0matrix(width, height, rand_rate) #  ooo
-    img = coloring(ooo)                         #  Convert
+    binary_ooo = rand0matrix(width, height, rand_rate) #  ooo
+    img = graying(binary_ooo)                         #  Convert
     file_name = (save_dir[1]+filename_generate(name_size)+".png") # Create name
     cv2.imwrite(file_name, img)                 #  Write
 
