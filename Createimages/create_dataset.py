@@ -10,8 +10,10 @@ width  = 9
 height = 9
 rand_rate = 0.1
 save_dir = ["../Dataset/Cross/", "../Dataset/Square/"]
-num_of_img = 30
+num_of_img = 100
 name_size = 8
+black = 0
+white = 1
 
 def rand_unit(rr=0.1):
     ## Return int -1 to 1 randomly.
@@ -22,42 +24,42 @@ def rand_unit(rr=0.1):
     return x, y
 
 
-def randXmatrix(w, h, rr=0.5):
-    rama = np.ones((w, h)) # rand_matrix 行列を初期化
+def randXmatrix(w, h, rr=0.1):
+    rama = np.zeros((w, h)) # rand_matrix 行列を初期化
     x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     expr_p = y - x # 変数expr_p に式を代入
     expr_m = y + x
     for i in range(w-2):
         y = sympy.solve(expr_p.subs(x, i)) # x に i を代入して y を導出
-        rx, ry = rand_unit()
-        rama[y[0]+1+ry][i+1+rx] = 0  # \ y = x 第1象限が右下に位置する点に注意
+        rx, ry = rand_unit(rr)
+        rama[y[0]+1+ry][i+1+rx] = white  # \ y = x 第1象限が右下に位置する点に注意
     for i in range(w-2):
         y = sympy.solve(expr_m.subs(x, i))
-        rx, ry = rand_unit()
-        rama[-y[0]+1][(h-1)-i-1] = 0 # / y = -x
+        rx, ry = rand_unit(rr)
+        rama[-y[0]+1][(h-1)-i-1] = white # / y = -x
     return(rama)
 
-def rand0matrix(w, h, rr=0.5):
-    rama = np.ones((w, h))
+def rand0matrix(w, h, rr=0.1):
+    rama = np.zeros((w, h))
 #    x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     expr_t = y - 1
     expr_b = y + 2
     for i in range(w-2): # Top side, 上辺
         y = sympy.solve(expr_t.subs(1, 1))
-        rx, ry = rand_unit()
-        rama[y[0]+ry][i+1+rx] = 0
+        rx, ry = rand_unit(rr)
+        rama[y[0]+ry][i+1+rx] = white
     for i in range(w-2): # Bottom side, 底辺
         y = sympy.solve(expr_b.subs(1, 1))
-        rx, ry = rand_unit()
-        rama[y[0]+ry][i+1+rx] = 0
+        rx, ry = rand_unit(rr)
+        rama[y[0]+ry][i+1+rx] = white
     for i in range(w-2): # Left side, 左辺
-        rx, ry = rand_unit()
-        rama[i+1+ry][1+rx] = 0
+        rx, ry = rand_unit(rr)
+        rama[i+1+ry][1+rx] = white
     for i in range(w-2): # Right side, 右辺
-        rx, ry = rand_unit()
-        rama[i+1+ry][-2+rx] = 0
+        rx, ry = rand_unit(rr)
+        rama[i+1+ry][-2+rx] = white
     return(rama)
 
 # def coloring(binary_matrix):
@@ -99,8 +101,10 @@ for i in range(num_of_img):
     file_name = (save_dir[0]+filename_generate(name_size)+".png") # Create the image name and path
     cv2.imwrite(file_name, img)                 #  Write a file
 
-    binary_ooo = rand0matrix(width, height, rand_rate) #  ooo
+    binary_ooo = rand0matrix(width, height, rand_rate) #  Matrix into ooo
     img = graying(binary_ooo)                         #  Convert
     file_name = (save_dir[1]+filename_generate(name_size)+".png") # Create name
     cv2.imwrite(file_name, img)                 #  Write
 
+print("Create images as Dataset that")
+print(save_dir, "x (", height, "x",  width, ")", "x", num_of_img, ", random_rate=", rand_rate)
