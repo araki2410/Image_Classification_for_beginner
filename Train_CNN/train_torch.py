@@ -9,6 +9,7 @@ import os # OS インターフェース. ファイルの読み書きに用いる
 import mycnn_torch # 自分で作成したネットワーク. 同じディレクトリにmycnn_torch.pyを用意
 import mydataloader_torch # 自作したデータローダ.
 
+save_file = "mytrained.model"
 epoch_size = 6
 bs = 2   # Batch size
 learning_rate = 0.0001 # Learning rate
@@ -107,33 +108,6 @@ def test(data_loader):
     
     return val_loss, val_accuracy
 
-    
-
-def demo(test_loader):
-    model.eval()
-    predicts = {}
-    with torch.no_grad():
-        for batch_idx, (images, labels) in enumerate(test_loader):
-            #images = images.to(device)
-            #labels = labels.to(device)
-            
-            outputs = model(images)
-            predicted = outputs.max(1, keepdim=True)[1]
-
-            for i in range(labels.shape[0]):
-                label = labels[i].data.cpu().item()
-                try:    
-                    predicts[label].append(predicted[i].data.cpu().item())
-                except:
-                    predicts[label] = []
-                    predicts[label].append(predicted[i].data.cpu().item())
-            #print(predicts[label])
-
-    return predicts
-
-
-#hoge = train(test_loader)
-#print(hoge)
 
 
 for epoch in range(epoch_size):
@@ -144,3 +118,5 @@ for epoch in range(epoch_size):
     
 
 print('Finished Training')
+torch.save(model.state_dict(), save_file)
+print('Save model to', save_file)
