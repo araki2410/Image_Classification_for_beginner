@@ -9,6 +9,11 @@ g = gray_image               # 省略表記を用意
 img_h = gray_image.shape[0]  # height, 入力画像の高さ
 img_w = gray_image.shape[1]  # width,  入力画像の横幅
 
+## 平滑化フィルタ
+filter = [[1,1,1],
+          [1,1,1],
+          [1,1,1]]
+
 f = np.array(filter) # 作成したフィルタをndarray型に変換 (ここではfor文を使うのでndarrayとしてはあまり活用しない)
 fil_h = f.shape[0]   # filter_height, フィルタの高さ
 fil_w = f.shape[1]   # filter_width,  フィルタの幅
